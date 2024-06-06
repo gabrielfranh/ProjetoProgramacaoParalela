@@ -88,7 +88,7 @@ void recBitonicSort(int lo, int cnt, int dir) {
     recBitonicSort(lo, k, ASCENDING);
     #pragma omp task
     recBitonicSort(lo+k, k, DESCENDING);
-    #pragma omp task
+    #pragma omp taskwait
     bitonicMerge(lo, cnt, dir);
   }
 }
