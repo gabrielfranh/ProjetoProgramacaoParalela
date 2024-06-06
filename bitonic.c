@@ -98,7 +98,7 @@ void recBitonicSort(int lo, int cnt, int dir) {
  in ASCENDING order
  **/
 void BitonicSort() {
-  #pragma omp parallel
+  #pragma omp single
   recBitonicSort(0, N, ASCENDING);
 }
 
@@ -128,6 +128,7 @@ int main(int argc, char **argv) {
 
   gettimeofday(&start, NULL);
 
+  #pragma omp parallel
   BitonicSort();
 
   gettimeofday(&end, NULL);
