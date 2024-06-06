@@ -84,8 +84,11 @@ void bitonicMerge(int lo, int cnt, int dir) {
 void recBitonicSort(int lo, int cnt, int dir) {
   if (cnt>1) {
     int k=cnt/2;
+    #pragma omp task
     recBitonicSort(lo, k, ASCENDING);
+    #pragma omp task
     recBitonicSort(lo+k, k, DESCENDING);
+    #pragma omp task
     bitonicMerge(lo, cnt, dir);
   }
 }
@@ -95,6 +98,7 @@ void recBitonicSort(int lo, int cnt, int dir) {
  in ASCENDING order
  **/
 void BitonicSort() {
+  #pragma omp parallel
   recBitonicSort(0, N, ASCENDING);
 }
 
