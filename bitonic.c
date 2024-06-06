@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 #define LENGTH 8
 
@@ -101,6 +102,7 @@ void BitonicSort() {
 int main(int argc, char **argv) {
 
   long int i;
+  struct timeval start, end;
 
   openfiles();
 
@@ -120,10 +122,20 @@ int main(int argc, char **argv) {
   for (i = 0; i < N; i++)
     fscanf(fin, "%s", strings + (i * LENGTH));
 
+  gettimeofday(&start, NULL);
+
   BitonicSort();
+
+  gettimeofday(&end, NULL);
+
+  double time = \
+    (((double)(end.tv_sec)*1000.0 + (double)(end.tv_usec/1000.0)) - \
+    ((double)(start.tv_sec)*1000.0 + (double)(start.tv_usec/1000.0)));
 
   for (i = 0; i < N; i++)
     fprintf(fout, "%s\n", strings + (i * LENGTH));
+
+  fprintf(fout, "Tempo gasto = %g ms\n", time);
 
   free(strings);
   closefiles();
