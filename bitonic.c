@@ -9,6 +9,7 @@
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
+#include <omp.h>
 
 #define LENGTH 8
 
@@ -69,10 +70,12 @@ void bitonicMerge(int lo, int cnt, int dir) {
   if (cnt>1) {
     int k=cnt/2;
     int i;
-    #pragma omp parallel for
+    #pragma omp parallel for private(i)
     for (i=lo; i<lo+k; i++)
       compare(i, i+k, dir);
+    //#pragma omp task
     bitonicMerge(lo, k, dir);
+    //#pragma omp task
     bitonicMerge(lo+k, k, dir);
   }
 }
