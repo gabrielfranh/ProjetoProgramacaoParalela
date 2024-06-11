@@ -71,11 +71,12 @@ void bitonicMerge(int lo, int cnt, int dir) {
     int k=cnt/2;  
     int i;
 
-    //#pragma omp parallel for private(i)
     for (i=lo; i<lo+k; i++)
       compare(i, i+k, dir);
-
+    
+    #pragma omp task if(cnt>1024)
     bitonicMerge(lo, k, dir);
+    #pragma omp task if(cnt>1024)
     bitonicMerge(lo+k, k, dir);
   }
 }
