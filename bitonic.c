@@ -75,9 +75,9 @@ void bitonicMerge(int lo, int cnt, int dir) {
       compare(i, i+k, dir);
     
     
-    #pragma omp task if(cnt>1024)
+    #pragma omp task if(cnt>4096)
     bitonicMerge(lo, k, dir);
-    #pragma omp task if(cnt>1024)
+    #pragma omp task if(cnt>4096)
     bitonicMerge(lo+k, k, dir);
     #pragma omp taskwait
   }
@@ -91,9 +91,9 @@ void bitonicMerge(int lo, int cnt, int dir) {
 void recBitonicSort(int lo, int cnt, int dir) {
   if (cnt>1) {
     int k=cnt/2;
-    #pragma omp task if(cnt>1024)
+    #pragma omp task if(cnt>4096)
     recBitonicSort(lo, k, ASCENDING);
-    #pragma omp task if(cnt>1024)
+    #pragma omp task if(cnt>4096)
     recBitonicSort(lo+k, k, DESCENDING);
     #pragma omp taskwait
     bitonicMerge(lo, cnt, dir);
