@@ -28,7 +28,7 @@ unsigned long int powersOfTwo[] =
 #define DESCENDING 0
 
 void openfiles() {
-  fin = fopen("sort.in", "r+");
+  fin = fopen("sort.txt", "r+");
   if (fin == NULL ) {
     perror("fopen fin");
     exit(EXIT_FAILURE);
@@ -68,14 +68,14 @@ void compare(int i, int j, int dir) {
  **/
 void bitonicMerge(int lo, int cnt, int dir) {
   if (cnt>1) {
-    int k=cnt/2;
+    int k=cnt/2;  
     int i;
-    #pragma omp parallel for private(i)
+
+    //#pragma omp parallel for private(i)
     for (i=lo; i<lo+k; i++)
       compare(i, i+k, dir);
-    //#pragma omp task
+
     bitonicMerge(lo, k, dir);
-    //#pragma omp task
     bitonicMerge(lo+k, k, dir);
   }
 }
@@ -88,9 +88,9 @@ void bitonicMerge(int lo, int cnt, int dir) {
 void recBitonicSort(int lo, int cnt, int dir) {
   if (cnt>1) {
     int k=cnt/2;
-    #pragma omp task
+    #pragma omp task if(cnt>1024)
     recBitonicSort(lo, k, ASCENDING);
-    #pragma omp task
+    #pragma omp task if(cnt>1024)
     recBitonicSort(lo+k, k, DESCENDING);
     #pragma omp taskwait
     bitonicMerge(lo, cnt, dir);
@@ -102,8 +102,11 @@ void recBitonicSort(int lo, int cnt, int dir) {
  in ASCENDING order
  **/
 void BitonicSort() {
-  #pragma omp single
-  recBitonicSort(0, N, ASCENDING);
+  #pragma omp parallel
+  {
+    #pragma omp single
+    recBitonicSort(0, N, ASCENDING);
+  }
 }
 
 /** the main program **/ 
@@ -132,7 +135,6 @@ int main(int argc, char **argv) {
 
   gettimeofday(&start, NULL);
 
-  #pragma omp parallel
   BitonicSort();
 
   gettimeofday(&end, NULL);
