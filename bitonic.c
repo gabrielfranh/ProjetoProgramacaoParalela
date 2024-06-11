@@ -74,10 +74,12 @@ void bitonicMerge(int lo, int cnt, int dir) {
     for (i=lo; i<lo+k; i++)
       compare(i, i+k, dir);
     
+    
     #pragma omp task if(cnt>1024)
     bitonicMerge(lo, k, dir);
     #pragma omp task if(cnt>1024)
     bitonicMerge(lo+k, k, dir);
+    #pragma omp taskwait
   }
 }
 
